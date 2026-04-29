@@ -1,0 +1,904 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --gold:#C9A84C;--gold2:#E8C97A;--dark:#0D0D0D;--dark2:#141414;--dark3:#1A1A1A;
+    --dark4:#222;--mid:#2A2A2A;--border:#333;--text:#F5F0E8;--muted:#8A8580;
+    --danger:#E24B4A;--success:#3B9E75
+  }
+  body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+  h1,h2,h3,.serif{font-family:'Playfair Display',serif}
+  .screen{display:none;min-height:100vh;flex-direction:column}
+  .screen.active{display:flex}
+
+  /* NAV */
+  nav{background:rgba(13,13,13,0.96);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100}
+  .logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--gold);letter-spacing:1px;cursor:pointer}
+  .logo span{color:var(--text);font-weight:700}
+  .nav-links{display:flex;gap:2rem;align-items:center}
+  .nav-link{color:var(--muted);font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color .2s;text-decoration:none}
+  .nav-link:hover,.nav-link.active{color:var(--gold)}
+  .btn{padding:10px 24px;border-radius:2px;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500}
+  .btn-gold{background:var(--gold);color:var(--dark);border:none}
+  .btn-gold:hover{background:var(--gold2)}
+  .btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+  .btn-outline:hover{background:var(--gold);color:var(--dark)}
+  .btn-dark{background:var(--dark3);color:var(--text);border:1px solid var(--border)}
+  .btn-dark:hover{border-color:var(--gold);color:var(--gold)}
+  .btn-danger{background:var(--danger);color:#fff;border:none}
+
+  /* HERO */
+  .hero{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:4rem 2rem}
+  .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0D0D0D 60%,#1a1000 100%)}
+  .hero-lines{position:absolute;inset:0;opacity:.07}
+  .hero-content{position:relative;text-align:center;max-width:720px}
+  .hero-badge{display:inline-block;padding:6px 20px;border:1px solid var(--gold);color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:2rem}
+  .hero h1{font-size:clamp(3rem,7vw,6rem);font-weight:900;line-height:1;margin-bottom:1.5rem;color:var(--text)}
+  .hero h1 em{color:var(--gold);font-style:normal;display:block}
+  .hero p{font-size:1.1rem;color:var(--muted);max-width:480px;margin:0 auto 2.5rem;line-height:1.7}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+  .divider{width:60px;height:1px;background:var(--gold);margin:0 auto 1.5rem}
+
+  /* SECTIONS */
+  section{padding:6rem 2rem}
+  .section-tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+  .section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;margin-bottom:1rem;color:var(--text)}
+  .section-sub{color:var(--muted);font-size:1rem;line-height:1.7;max-width:500px}
+  .container{max-width:1100px;margin:0 auto}
+  .text-center{text-align:center}
+  .text-center .section-sub{margin:0 auto}
+
+  /* SERVICES */
+  .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:3rem;border:1px solid var(--border)}
+  .service-card{background:var(--dark2);padding:2.5rem 2rem;cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+  .service-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width .3s}
+  .service-card:hover{background:var(--dark3)}
+  .service-card:hover::after{width:100%}
+  .service-icon{font-size:2rem;margin-bottom:1rem}
+  .service-name{font-size:1.1rem;font-weight:500;margin-bottom:.5rem;color:var(--text)}
+  .service-desc{font-size:.85rem;color:var(--muted);margin-bottom:1rem;line-height:1.6}
+  .service-price{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);font-weight:700}
+  .service-duration{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+
+  /* BARBERS */
+  .barbers-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:3rem}
+  .barber-card{background:var(--dark2);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:border-color .2s}
+  .barber-card:hover{border-color:var(--gold)}
+  .barber-avatar{height:200px;background:var(--mid);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .barber-initials{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--gold);opacity:.4}
+  .barber-info{padding:1.5rem}
+  .barber-name{font-size:1.2rem;font-weight:500;margin-bottom:.25rem}
+  .barber-role{font-size:.8rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom.75rem}
+  .barber-rating{display:flex;align-items:center;gap:.5rem;margin-top:.75rem}
+  .stars{color:var(--gold);font-size:.9rem}
+  .rating-count{font-size:.8rem;color:var(--muted)}
+  .barber-btn{display:block;text-align:center;margin:1rem 1.5rem 1.5rem;padding:10px;border:1px solid var(--gold);color:var(--gold);font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+  .barber-btn:hover{background:var(--gold);color:var(--dark)}
+
+  /* GALLERY */
+  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:3rem}
+  .gallery-item{aspect-ratio:1;background:var(--mid);position:relative;overflow:hidden;cursor:pointer}
+  .gallery-item-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.3;transition:opacity .2s,transform .2s}
+  .gallery-item:hover .gallery-item-inner{opacity:.6;transform:scale(1.1)}
+  .gallery-overlay{position:absolute;inset:0;background:rgba(201,168,76,.15);opacity:0;transition:opacity .2s}
+  .gallery-item:hover .gallery-overlay{opacity:1}
+
+  /* BOOKING FLOW */
+  .booking-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+  .booking-modal.open{display:flex}
+  .booking-box{background:var(--dark2);border:1px solid var(--border);width:100%;max-width:640px;max-height:90vh;overflow-y:auto}
+  .booking-header{padding:2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .booking-header h2{font-size:1.4rem;font-weight:700}
+  .close-btn{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1}
+  .close-btn:hover{color:var(--text)}
+  .booking-body{padding:2rem}
+  .booking-steps{display:flex;gap:0;margin-bottom:2rem}
+  .step-dot{flex:1;height:3px;background:var(--border);transition:background .3s}
+  .step-dot.done{background:var(--gold)}
+  .booking-step{display:none}
+  .booking-step.active{display:block}
+  .step-label{font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem}
+  .select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem}
+  .select-card{border:1px solid var(--border);padding:1.25rem;cursor:pointer;transition:all .2s;position:relative}
+  .select-card:hover{border-color:var(--gold)}
+  .select-card.selected{border-color:var(--gold);background:rgba(201,168,76,.08)}
+  .select-card.selected::after{content:'✓';position:absolute;top:.5rem;right:.75rem;color:var(--gold);font-size:.8rem}
+  .select-name{font-size:.95rem;font-weight:500;margin-bottom:.25rem}
+  .select-meta{font-size:.8rem;color:var(--muted)}
+  .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:1rem}
+  .cal-day{padding:8px;text-align:center;font-size:.8rem;cursor:pointer;border:1px solid transparent;transition:all .2s}
+  .cal-day:hover:not(.disabled):not(.cal-header){border-color:var(--gold);color:var(--gold)}
+  .cal-day.selected{background:var(--gold);color:var(--dark)}
+  .cal-day.disabled{color:var(--border);cursor:default}
+  .cal-day.cal-header{color:var(--muted);cursor:default;font-size:.7rem;letter-spacing:1px;text-transform:uppercase}
+  .time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:1rem}
+  .time-slot{padding:10px;text-align:center;font-size:.85rem;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+  .time-slot:hover{border-color:var(--gold);color:var(--gold)}
+  .time-slot.selected{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+  .time-slot.taken{color:var(--border);cursor:default;text-decoration:line-through}
+  .summary-row{display:flex;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);font-size:.9rem}
+  .summary-row:last-of-type{border:none}
+  .summary-label{color:var(--muted)}
+  .summary-val{font-weight:500}
+  .total-row{display:flex;justify-content:space-between;padding:1.5rem 0;font-size:1.1rem}
+  .total-label{font-family:'Playfair Display',serif;font-weight:700}
+  .total-val{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);font-size:1.4rem}
+  .payment-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.5rem 0}
+  .pay-method{border:1px solid var(--border);padding:1rem;text-align:center;cursor:pointer;transition:all .2s}
+  .pay-method:hover,.pay-method.selected{border-color:var(--gold)}
+  .pay-method.selected{background:rgba(201,168,76,.08)}
+  .pay-icon{font-size:1.5rem;margin-bottom:.4rem}
+  .pay-name{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+  .form-field{margin-bottom:1.25rem}
+  .form-label{font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block}
+  .form-input{width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--text);padding:12px 14px;font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+  .form-input:focus{border-color:var(--gold)}
+  .booking-footer{padding:1.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .success-screen{text-align:center;padding:3rem 1rem}
+  .success-icon{width:80px;height:80px;border-radius:50%;background:rgba(59,158,117,.15);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 2rem}
+
+  /* ADMIN */
+  .admin-layout{display:flex;min-height:100vh}
+  .admin-sidebar{width:240px;background:var(--dark2);border-right:1px solid var(--border);padding:1.5rem 0;flex-shrink:0}
+  .sidebar-logo{padding:0 1.5rem 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem}
+  .sidebar-logo p{font-size:.7rem;color:var(--muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:1px}
+  .sidebar-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.5rem;cursor:pointer;font-size:.85rem;color:var(--muted);transition:all .2s}
+  .sidebar-item:hover,.sidebar-item.active{color:var(--text);background:rgba(201,168,76,.05);border-left:2px solid var(--gold)}
+  .sidebar-item.active{color:var(--gold)}
+  .sidebar-icon{font-size:1rem;width:20px;text-align:center}
+  .admin-main{flex:1;overflow:auto}
+  .admin-topbar{padding:1.25rem 2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .admin-page{display:none;padding:2rem}
+  .admin-page.active{display:block}
+  .admin-page-title{font-size:1.5rem;font-weight:700;margin-bottom:2rem;font-family:'Playfair Display',serif}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+  .stat-card{background:var(--dark2);border:1px solid var(--border);padding:1.5rem}
+  .stat-label{font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+  .stat-val{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold)}
+  .stat-sub{font-size:.8rem;color:var(--muted);margin-top:.25rem}
+  .data-table{width:100%;border-collapse:collapse;background:var(--dark2);border:1px solid var(--border)}
+  .data-table th{padding:1rem;text-align:left;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);font-weight:400}
+  .data-table td{padding:1rem;font-size:.875rem;border-bottom:1px solid rgba(51,51,51,.5)}
+  .data-table tr:last-child td{border:none}
+  .data-table tr:hover td{background:rgba(201,168,76,.03)}
+  .badge{padding:3px 10px;font-size:.7rem;letter-spacing:.5px;text-transform:uppercase;border-radius:1px}
+  .badge-success{background:rgba(59,158,117,.15);color:#3B9E75}
+  .badge-pending{background:rgba(201,168,76,.15);color:var(--gold)}
+  .badge-cancel{background:rgba(226,75,74,.15);color:var(--danger)}
+  .admin-section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+  .barber-row{display:flex;align-items:center;gap:1rem;background:var(--dark2);border:1px solid var(--border);padding:1.25rem;margin-bottom:.75rem}
+  .barber-av{width:44px;height:44px;background:var(--mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);font-weight:700;flex-shrink:0}
+  .barber-row-info{flex:1}
+  .barber-row-name{font-size:.95rem;font-weight:500}
+  .barber-row-meta{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+  .barber-row-actions{display:flex;gap:.5rem}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem}
+  .modal-overlay.open{display:flex}
+  .modal-box{background:var(--dark2);border:1px solid var(--border);width:100%;max-width:480px;padding:2rem}
+  .modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.5rem}
+  .config-row{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 0;border-bottom:1px solid var(--border)}
+  .config-label{font-size:.9rem}
+  .config-desc{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+  .toggle{width:44px;height:24px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+  .toggle.on{background:var(--gold)}
+  .toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s}
+  .toggle.on::after{left:23px}
+  .instagram-badge{display:inline-flex;align-items:center;gap:.4rem;padding:4px 12px;border:1px solid #C13584;color:#C13584;font-size:.75rem;border-radius:20px}
+
+  .dot-deco{position:absolute;width:300px;height:300px;border-radius:50%;border:1px solid rgba(201,168,76,.08);pointer-events:none}
+</style>
+
+<div id="app">
+
+<!-- PUBLIC SITE -->
+<div id="public-site" class="screen active">
+
+  <nav>
+    <div class="logo" onclick="scrollTo(0,0)">AGUIRRE<span>Barber</span></div>
+    <div class="nav-links">
+      <span class="nav-link" onclick="scrollToSection('services')">Servicios</span>
+      <span class="nav-link" onclick="scrollToSection('barbers')">Equipo</span>
+      <span class="nav-link" onclick="scrollToSection('gallery')">Trabajos</span>
+      <button class="btn btn-gold" onclick="openBooking()">Reservar Turno</button>
+    </div>
+    <span class="nav-link" onclick="showAdmin()" style="font-size:11px;color:#333;position:absolute;right:180px;top:50%;transform:translateY(-50%)">Admin</span>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <svg class="hero-lines" viewBox="0 0 1100 700" preserveAspectRatio="xMidYMid slice">
+      <line x1="0" y1="200" x2="1100" y2="500" stroke="#C9A84C" stroke-width="0.5"/>
+      <line x1="200" y1="0" x2="900" y2="700" stroke="#C9A84C" stroke-width="0.5"/>
+      <line x1="0" y1="400" x2="600" y2="0" stroke="#C9A84C" stroke-width="0.3"/>
+      <circle cx="900" cy="150" r="180" fill="none" stroke="#C9A84C" stroke-width="0.5"/>
+      <circle cx="900" cy="150" r="120" fill="none" stroke="#C9A84C" stroke-width="0.3"/>
+    </svg>
+    <div class="hero-content">
+      <div class="hero-badge">Barbería Premium · Curitiba</div>
+      <h1>Gustavo<em>Aguirre</em></h1>
+      <div class="divider"></div>
+      <p>Cortes de precisión, estilo inconfundible. Reservá tu turno online y pagá antes de llegar.</p>
+      <div class="hero-btns">
+        <button class="btn btn-gold" onclick="openBooking()">Reservar Turno</button>
+        <button class="btn btn-outline" onclick="scrollToSection('gallery')">Ver Trabajos</button>
+      </div>
+      <div class="instagram-badge" style="margin-top:2rem;cursor:pointer">
+        <span style="font-size:1rem">📸</span> @gustavo.aguirre.barber
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section id="services" style="background:var(--dark2);padding:5rem 2rem">
+    <div class="container">
+      <div class="section-tag">Lo que hacemos</div>
+      <h2 class="section-title">Nuestros Servicios</h2>
+      <div class="services-grid">
+        <div class="service-card" onclick="openBookingWithService('Corte Clásico')">
+          <div class="service-icon">✂️</div>
+          <div class="service-name">Corte Clásico</div>
+          <div class="service-desc">Corte a tijera o máquina, acabado prolijo y lavado incluido.</div>
+          <div class="service-price">R$ 45</div>
+          <div class="service-duration">40 min</div>
+        </div>
+        <div class="service-card" onclick="openBookingWithService('Fade + Degradé')">
+          <div class="service-icon">💈</div>
+          <div class="service-name">Fade + Degradé</div>
+          <div class="service-desc">Degradado skin fade, mid o high. Transición perfecta.</div>
+          <div class="service-price">R$ 60</div>
+          <div class="service-duration">50 min</div>
+        </div>
+        <div class="service-card" onclick="openBookingWithService('Barba Completa')">
+          <div class="service-icon">🪒</div>
+          <div class="service-name">Barba Completa</div>
+          <div class="service-desc">Delineado, afeitado con navaja y toalla caliente.</div>
+          <div class="service-price">R$ 35</div>
+          <div class="service-duration">30 min</div>
+        </div>
+        <div class="service-card" onclick="openBookingWithService('Combo Corte + Barba')">
+          <div class="service-icon">👑</div>
+          <div class="service-name">Combo Premium</div>
+          <div class="service-desc">Corte a elección + barba completa + productos premium.</div>
+          <div class="service-price">R$ 90</div>
+          <div class="service-duration">80 min</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BARBERS -->
+  <section id="barbers">
+    <div class="container">
+      <div class="section-tag text-center" style="text-align:center">El equipo</div>
+      <h2 class="section-title text-center" style="text-align:center;margin-bottom:.5rem">Nuestros Barberos</h2>
+      <p class="section-sub text-center" style="text-align:center;margin:0 auto 3rem">Elegí tu barbero favorito y reservá directo con él.</p>
+      <div class="barbers-grid">
+        <div class="barber-card">
+          <div class="barber-avatar" style="background:linear-gradient(135deg,#1a1000,#2a1f00)">
+            <div class="barber-initials">GA</div>
+            <div style="position:absolute;top:.75rem;right:.75rem;background:var(--gold);color:var(--dark);font-size:.65rem;padding:3px 8px;letter-spacing:1px;text-transform:uppercase">Owner</div>
+          </div>
+          <div class="barber-info">
+            <div class="barber-name">Gustavo Aguirre</div>
+            <div class="barber-role">Master Barber · 12 años exp.</div>
+            <div class="barber-rating">
+              <span class="stars">★★★★★</span>
+              <span class="rating-count">4.9 (218 reseñas)</span>
+            </div>
+          </div>
+          <div class="barber-btn" onclick="openBookingWithBarber('Gustavo Aguirre')">Reservar con Gustavo</div>
+        </div>
+        <div class="barber-card">
+          <div class="barber-avatar" style="background:linear-gradient(135deg,#001020,#001a30)">
+            <div class="barber-initials">MR</div>
+          </div>
+          <div class="barber-info">
+            <div class="barber-name">Marcos Rodríguez</div>
+            <div class="barber-role">Senior Barber · 7 años exp.</div>
+            <div class="barber-rating">
+              <span class="stars">★★★★★</span>
+              <span class="rating-count">4.8 (134 reseñas)</span>
+            </div>
+          </div>
+          <div class="barber-btn" onclick="openBookingWithBarber('Marcos Rodríguez')">Reservar con Marcos</div>
+        </div>
+        <div class="barber-card">
+          <div class="barber-avatar" style="background:linear-gradient(135deg,#0a0010,#150020)">
+            <div class="barber-initials">LC</div>
+          </div>
+          <div class="barber-info">
+            <div class="barber-name">Lucas Costa</div>
+            <div class="barber-role">Barber · 4 años exp.</div>
+            <div class="barber-rating">
+              <span class="stars">★★★★☆</span>
+              <span class="rating-count">4.7 (89 reseñas)</span>
+            </div>
+          </div>
+          <div class="barber-btn" onclick="openBookingWithBarber('Lucas Costa')">Reservar con Lucas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" style="background:var(--dark2);padding:5rem 2rem">
+    <div class="container">
+      <div class="section-tag text-center" style="text-align:center">Instagram</div>
+      <h2 class="section-title text-center" style="text-align:center">Últimos Trabajos</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item" style="background:#1a1000"><div class="gallery-item-inner">✂️</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#0a1020"><div class="gallery-item-inner">💈</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#100010"><div class="gallery-item-inner">🪒</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#001a10"><div class="gallery-item-inner">✂️</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#0a1020"><div class="gallery-item-inner">💈</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#1a1000"><div class="gallery-item-inner">🪒</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#100010"><div class="gallery-item-inner">✂️</div><div class="gallery-overlay"></div></div>
+        <div class="gallery-item" style="background:#001a10"><div class="gallery-item-inner">💈</div><div class="gallery-overlay"></div></div>
+      </div>
+      <div style="text-align:center;margin-top:2rem">
+        <div class="instagram-badge" style="cursor:pointer;display:inline-flex">
+          <span style="font-size:1rem">📸</span> Ver más en Instagram @gustavo.aguirre.barber
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:var(--dark2);border-top:1px solid var(--border);padding:3rem 2rem;text-align:center">
+    <div class="logo" style="margin-bottom:1rem">AGUIRRE<span>Barber</span></div>
+    <p style="color:var(--muted);font-size:.85rem">Curitiba, Paraná · Lunes a Sábado 9:00 - 20:00</p>
+    <p style="color:var(--border);font-size:.75rem;margin-top:1rem">© 2025 Aguirre Barber. Todos los derechos reservados.</p>
+  </footer>
+</div>
+
+
+<!-- BOOKING MODAL -->
+<div class="booking-modal" id="booking-modal">
+  <div class="booking-box">
+    <div class="booking-header">
+      <h2 class="serif" id="booking-title">Reservar Turno</h2>
+      <button class="close-btn" onclick="closeBooking()">✕</button>
+    </div>
+    <div class="booking-body">
+      <div class="booking-steps">
+        <div class="step-dot done" id="s1"></div>
+        <div class="step-dot" id="s2"></div>
+        <div class="step-dot" id="s3"></div>
+        <div class="step-dot" id="s4"></div>
+        <div class="step-dot" id="s5"></div>
+      </div>
+
+      <!-- STEP 1: Barber -->
+      <div class="booking-step active" id="step-1">
+        <div class="step-label">Paso 1 — Elegí tu barbero</div>
+        <div class="select-grid">
+          <div class="select-card" onclick="selectBarber('Gustavo Aguirre','GA')">
+            <div class="select-name">Gustavo Aguirre</div>
+            <div class="select-meta">Master · 12 años</div>
+          </div>
+          <div class="select-card" onclick="selectBarber('Marcos Rodríguez','MR')">
+            <div class="select-name">Marcos Rodríguez</div>
+            <div class="select-meta">Senior · 7 años</div>
+          </div>
+          <div class="select-card" onclick="selectBarber('Lucas Costa','LC')">
+            <div class="select-name">Lucas Costa</div>
+            <div class="select-meta">Barber · 4 años</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Service -->
+      <div class="booking-step" id="step-2">
+        <div class="step-label">Paso 2 — Elegí el servicio</div>
+        <div class="select-grid">
+          <div class="select-card" onclick="selectService('Corte Clásico','R$ 45','40 min')">
+            <div class="select-name">Corte Clásico</div>
+            <div class="select-meta">R$ 45 · 40 min</div>
+          </div>
+          <div class="select-card" onclick="selectService('Fade + Degradé','R$ 60','50 min')">
+            <div class="select-name">Fade + Degradé</div>
+            <div class="select-meta">R$ 60 · 50 min</div>
+          </div>
+          <div class="select-card" onclick="selectService('Barba Completa','R$ 35','30 min')">
+            <div class="select-name">Barba Completa</div>
+            <div class="select-meta">R$ 35 · 30 min</div>
+          </div>
+          <div class="select-card" onclick="selectService('Combo Premium','R$ 90','80 min')">
+            <div class="select-name">Combo Premium</div>
+            <div class="select-meta">R$ 90 · 80 min</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Date & Time -->
+      <div class="booking-step" id="step-3">
+        <div class="step-label">Paso 3 — Fecha y horario</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+          <span style="font-size:.8rem;color:var(--muted)">Mayo 2025</span>
+        </div>
+        <div class="calendar-grid" id="cal"></div>
+        <div class="time-grid" id="times" style="display:none;margin-top:1.5rem"></div>
+      </div>
+
+      <!-- STEP 4: Client Info + Payment -->
+      <div class="booking-step" id="step-4">
+        <div class="step-label">Paso 4 — Tus datos</div>
+        <div class="form-field">
+          <label class="form-label">Nombre completo</label>
+          <input class="form-input" type="text" id="client-name" placeholder="Ej: Carlos Fernández">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Teléfono / WhatsApp</label>
+          <input class="form-input" type="tel" id="client-phone" placeholder="+54 11 xxxxxxxx">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="client-email" placeholder="tu@email.com">
+        </div>
+      </div>
+
+      <!-- STEP 5: Payment -->
+      <div class="booking-step" id="step-5">
+        <div class="step-label">Paso 5 — Confirmación y pago</div>
+        <div id="booking-summary"></div>
+        <div style="border-top:1px solid var(--border);padding-top:1.5rem;margin-top:.5rem">
+          <div style="font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem">Método de pago</div>
+          <div class="payment-methods">
+            <div class="pay-method selected" onclick="selectPay(this)">
+              <div class="pay-icon">💳</div>
+              <div class="pay-name">Tarjeta</div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-icon">📱</div>
+              <div class="pay-name">PIX</div>
+            </div>
+            <div class="pay-method" onclick="selectPay(this)">
+              <div class="pay-icon">💰</div>
+              <div class="pay-name">MercadoPago</div>
+            </div>
+          </div>
+          <div style="background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.2);padding:1rem;font-size:.8rem;color:var(--muted);line-height:1.6">
+            ⚠️ El pago es requerido para confirmar tu turno. En caso de cancelación con más de 24hs de anticipación, se reintegra el 100%.
+          </div>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="booking-step" id="step-success">
+        <div class="success-screen">
+          <div class="success-icon">✓</div>
+          <h3 class="serif" style="font-size:1.6rem;margin-bottom:.75rem">¡Turno Confirmado!</h3>
+          <p style="color:var(--muted);margin-bottom:1rem">Te enviamos la confirmación por WhatsApp y email.</p>
+          <p style="color:var(--muted);font-size:.85rem">Acordate de llegar 5 min antes. Si necesitás cancelar, contactanos con al menos 24hs de anticipación.</p>
+          <div style="margin-top:2rem;padding:1.5rem;background:var(--dark3);border:1px solid var(--border)">
+            <div id="confirm-details" style="font-size:.85rem;line-height:2;color:var(--muted)"></div>
+          </div>
+          <button class="btn btn-gold" style="margin-top:1.5rem" onclick="closeBooking()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+    <div class="booking-footer" id="booking-footer">
+      <button class="btn btn-dark" onclick="prevStep()" id="btn-back" style="display:none">← Volver</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-gold" onclick="nextStep()" id="btn-next" style="display:none">Continuar →</button>
+      <button class="btn btn-gold" onclick="confirmPayment()" id="btn-pay" style="display:none">Pagar y Confirmar →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ADMIN -->
+<div id="admin-site" class="screen">
+  <div class="admin-layout">
+    <div class="admin-sidebar">
+      <div class="sidebar-logo">
+        <div class="logo" style="font-size:16px">AGUIRRE<span>Barber</span></div>
+        <p>Panel Admin</p>
+      </div>
+      <div class="sidebar-item active" onclick="showAdminPage('dashboard',this)">
+        <span class="sidebar-icon">📊</span> Dashboard
+      </div>
+      <div class="sidebar-item" onclick="showAdminPage('turnos',this)">
+        <span class="sidebar-icon">📅</span> Turnos
+      </div>
+      <div class="sidebar-item" onclick="showAdminPage('barberos',this)">
+        <span class="sidebar-icon">✂️</span> Barberos
+      </div>
+      <div class="sidebar-item" onclick="showAdminPage('pagos',this)">
+        <span class="sidebar-icon">💰</span> Pagos
+      </div>
+      <div class="sidebar-item" onclick="showAdminPage('config',this)">
+        <span class="sidebar-icon">⚙️</span> Configuración
+      </div>
+      <div style="padding:1rem 1.5rem;margin-top:auto;border-top:1px solid var(--border);position:absolute;bottom:0;width:240px">
+        <div class="sidebar-item" onclick="showPublic()" style="padding:.5rem 0;color:var(--muted)">
+          <span class="sidebar-icon">🌐</span> Ver sitio público
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <div style="font-size:.9rem;color:var(--muted)">Bienvenido, <span style="color:var(--gold);font-weight:500">Gustavo</span></div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--dark);font-size:.85rem">GA</div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="admin-page active" id="page-dashboard">
+        <div class="admin-page-title">Dashboard</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Turnos hoy</div>
+            <div class="stat-val">12</div>
+            <div class="stat-sub">3 pendientes de pago</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Ingresos del mes</div>
+            <div class="stat-val">R$4.820</div>
+            <div class="stat-sub">+18% vs mes anterior</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Clientes nuevos</div>
+            <div class="stat-val">37</div>
+            <div class="stat-sub">Este mes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Barberos activos</div>
+            <div class="stat-val">3</div>
+            <div class="stat-sub">Gustavo, Marcos, Lucas</div>
+          </div>
+        </div>
+        <div style="font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:1rem">Próximos turnos — hoy</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Hora</th><th>Cliente</th><th>Servicio</th><th>Barbero</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>09:00</td><td>Carlos Fernández</td><td>Corte Clásico</td><td>Gustavo</td><td><span class="badge badge-success">Pagado</span></td></tr>
+            <tr><td>09:50</td><td>Diego Ramírez</td><td>Combo Premium</td><td>Gustavo</td><td><span class="badge badge-success">Pagado</span></td></tr>
+            <tr><td>10:00</td><td>Pablo Torres</td><td>Fade + Degradé</td><td>Marcos</td><td><span class="badge badge-success">Pagado</span></td></tr>
+            <tr><td>10:30</td><td>Nicolás Vega</td><td>Barba Completa</td><td>Lucas</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+            <tr><td>11:10</td><td>Matías López</td><td>Corte Clásico</td><td>Gustavo</td><td><span class="badge badge-success">Pagado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- TURNOS -->
+      <div class="admin-page" id="page-turnos">
+        <div class="admin-section-header">
+          <div class="admin-page-title" style="margin:0">Gestión de Turnos</div>
+          <div style="display:flex;gap:.5rem">
+            <button class="btn btn-dark" style="font-size:.75rem;padding:8px 16px">Hoy</button>
+            <button class="btn btn-dark" style="font-size:.75rem;padding:8px 16px">Esta semana</button>
+            <button class="btn btn-gold" style="font-size:.75rem;padding:8px 16px">+ Nuevo turno</button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Servicio</th><th>Barbero</th><th>Monto</th><th>Estado</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>29/05</td><td>09:00</td><td>Carlos F.</td><td>Corte Clásico</td><td>Gustavo</td><td>R$45</td><td><span class="badge badge-success">Pagado</span></td><td><button class="btn btn-dark" style="padding:4px 10px;font-size:.7rem">Ver</button></td></tr>
+            <tr><td>29/05</td><td>10:30</td><td>Nicolás V.</td><td>Barba Completa</td><td>Lucas</td><td>R$35</td><td><span class="badge badge-pending">Pendiente</span></td><td><button class="btn btn-danger" style="padding:4px 10px;font-size:.7rem">Cancelar</button></td></tr>
+            <tr><td>29/05</td><td>14:00</td><td>Martín S.</td><td>Combo Premium</td><td>Marcos</td><td>R$90</td><td><span class="badge badge-success">Pagado</span></td><td><button class="btn btn-dark" style="padding:4px 10px;font-size:.7rem">Ver</button></td></tr>
+            <tr><td>30/05</td><td>09:30</td><td>Rodrigo M.</td><td>Fade + Degradé</td><td>Gustavo</td><td>R$60</td><td><span class="badge badge-cancel">Cancelado</span></td><td>—</td></tr>
+            <tr><td>30/05</td><td>11:00</td><td>Sebastián P.</td><td>Corte Clásico</td><td>Lucas</td><td>R$45</td><td><span class="badge badge-success">Pagado</span></td><td><button class="btn btn-dark" style="padding:4px 10px;font-size:.7rem">Ver</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BARBEROS -->
+      <div class="admin-page" id="page-barberos">
+        <div class="admin-section-header">
+          <div class="admin-page-title" style="margin:0">Barberos del Equipo</div>
+          <button class="btn btn-gold" onclick="openAddBarber()">+ Agregar barbero</button>
+        </div>
+        <div id="barbers-list">
+          <div class="barber-row">
+            <div class="barber-av">GA</div>
+            <div class="barber-row-info">
+              <div class="barber-row-name">Gustavo Aguirre <span style="font-size:.7rem;color:var(--gold);border:1px solid var(--gold);padding:2px 8px;margin-left:.5rem">OWNER</span></div>
+              <div class="barber-row-meta">Master Barber · gustavo@aguirrebarber.com · 12 años exp.</div>
+            </div>
+            <div class="barber-row-actions">
+              <button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Editar</button>
+              <button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Horarios</button>
+            </div>
+          </div>
+          <div class="barber-row">
+            <div class="barber-av" style="background:#001a30">MR</div>
+            <div class="barber-row-info">
+              <div class="barber-row-name">Marcos Rodríguez</div>
+              <div class="barber-row-meta">Senior Barber · marcos@aguirrebarber.com · 7 años exp.</div>
+            </div>
+            <div class="barber-row-actions">
+              <button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Editar</button>
+              <button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Horarios</button>
+              <button class="btn btn-danger" style="padding:6px 14px;font-size:.75rem">Dar de baja</button>
+            </div>
+          </div>
+          <div class="barber-row">
+            <div class="barber-av" style="background:#150020">LC</div>
+            <div class="barber-row-info">
+              <div class="barber-row-name">Lucas Costa</div>
+              <div class="barber-row-meta">Barber · lucas@aguirrebarber.com · 4 años exp.</div>
+            </div>
+            <div class="barber-row-actions">
+              <button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Editar</button>
+              <button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Horarios</button>
+              <button class="btn btn-danger" style="padding:6px 14px;font-size:.75rem">Dar de baja</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGOS -->
+      <div class="admin-page" id="page-pagos">
+        <div class="admin-page-title">Pagos y Facturación</div>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card">
+            <div class="stat-label">Total cobrado (mes)</div>
+            <div class="stat-val">R$4.820</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pendientes</div>
+            <div class="stat-val" style="color:var(--danger)">R$175</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Reembolsados</div>
+            <div class="stat-val">R$90</div>
+          </div>
+        </div>
+        <table class="data-table" style="margin-top:1rem">
+          <thead><tr><th>Fecha</th><th>Cliente</th><th>Monto</th><th>Método</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>29/05</td><td>Carlos F.</td><td>R$45</td><td>PIX</td><td><span class="badge badge-success">Acreditado</span></td></tr>
+            <tr><td>29/05</td><td>Diego R.</td><td>R$90</td><td>Tarjeta</td><td><span class="badge badge-success">Acreditado</span></td></tr>
+            <tr><td>29/05</td><td>Nicolás V.</td><td>R$35</td><td>—</td><td><span class="badge badge-pending">Pendiente</span></td></tr>
+            <tr><td>28/05</td><td>Rodrigo M.</td><td>R$60</td><td>MercadoPago</td><td><span class="badge badge-cancel">Reembolsado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- CONFIG -->
+      <div class="admin-page" id="page-config">
+        <div class="admin-page-title">Configuración</div>
+        <div class="config-row">
+          <div>
+            <div class="config-label">Pago requerido para confirmar turno</div>
+            <div class="config-desc">Los clientes deben pagar antes de que el turno sea confirmado</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div>
+            <div class="config-label">Recordatorio automático por WhatsApp</div>
+            <div class="config-desc">Enviar recordatorio 24hs antes del turno</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div>
+            <div class="config-label">Política de cancelación</div>
+            <div class="config-desc">Reembolso completo con más de 24hs de anticipación</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div>
+            <div class="config-label">Sincronizar galería con Instagram</div>
+            <div class="config-desc">Mostrar automáticamente los últimos posts del perfil</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div>
+            <div class="config-label">Reseñas visibles en el sitio</div>
+            <div class="config-desc">Mostrar calificaciones y comentarios de clientes</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:.75rem">
+          <button class="btn btn-gold">Guardar cambios</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ADD BARBER MODAL -->
+<div class="modal-overlay" id="add-barber-modal">
+  <div class="modal-box">
+    <div class="modal-title">Agregar barbero</div>
+    <div class="form-field">
+      <label class="form-label">Nombre completo</label>
+      <input class="form-input" type="text" placeholder="Ej: Hernán García">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" placeholder="hernan@aguirrebarber.com">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Especialidad</label>
+      <input class="form-input" type="text" placeholder="Ej: Fades, Cortes clásicos">
+    </div>
+    <div class="form-field">
+      <label class="form-label">Años de experiencia</label>
+      <input class="form-input" type="number" placeholder="0">
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1.5rem">
+      <button class="btn btn-gold" onclick="confirmAddBarber()">Agregar al equipo</button>
+      <button class="btn btn-dark" onclick="closeAddBarber()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var booking={barber:'',barberInitials:'',service:'',price:'',date:'',time:'',step:1};
+var days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+var times=['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30'];
+var taken=['09:30','11:00','15:30','17:00'];
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showAdmin(){showScreen('admin-site')}
+function showPublic(){showScreen('public-site')}
+function scrollToSection(id){
+  var el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+function openBooking(){booking={barber:'',service:'',price:'',date:'',time:'',step:1};goToStep(1);document.getElementById('booking-modal').classList.add('open')}
+function openBookingWithService(s){
+  var map={'Corte Clásico':['R$ 45','40 min'],'Fade + Degradé':['R$ 60','50 min'],'Barba Completa':['R$ 35','30 min'],'Combo Premium':['R$ 90','80 min']};
+  booking={barber:'',service:s,price:map[s][0],date:'',time:'',step:1};
+  goToStep(1);document.getElementById('booking-modal').classList.add('open');
+}
+function openBookingWithBarber(b){
+  booking={barber:b,service:'',price:'',date:'',time:'',step:1};
+  goToStep(2);document.getElementById('booking-modal').classList.add('open');
+}
+function closeBooking(){document.getElementById('booking-modal').classList.remove('open')}
+
+function selectBarber(name,init){
+  booking.barber=name;booking.barberInitials=init;
+  document.querySelectorAll('#step-1 .select-card').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(()=>nextStep(),300);
+}
+function selectService(name,price,dur){
+  booking.service=name;booking.price=price;
+  document.querySelectorAll('#step-2 .select-card').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(()=>nextStep(),300);
+}
+function selectPay(el){
+  document.querySelectorAll('.pay-method').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function buildCal(){
+  var cal=document.getElementById('cal');
+  cal.innerHTML='';
+  days.forEach(d=>{var e=document.createElement('div');e.className='cal-day cal-header';e.textContent=d;cal.appendChild(e);});
+  var offset=3;
+  for(var i=0;i<offset;i++){var e=document.createElement('div');e.className='cal-day disabled';cal.appendChild(e);}
+  for(var d=1;d<=31;d++){
+    var e=document.createElement('div');
+    var isPast=(d<29);
+    var isSun=((d+offset-1)%7===0);
+    e.className='cal-day'+(isPast||isSun?' disabled':'');
+    e.textContent=d;
+    if(!isPast&&!isSun){var dd=d;(function(dd){e.onclick=function(){selectDay(dd,this);};})(dd);}
+    cal.appendChild(e);
+  }
+}
+function selectDay(d,el){
+  document.querySelectorAll('.cal-day').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  booking.date='29/05/2025';
+  var tg=document.getElementById('times');
+  tg.style.display='grid';tg.innerHTML='';
+  times.forEach(t=>{
+    var e=document.createElement('div');
+    var isTaken=taken.includes(t);
+    e.className='time-slot'+(isTaken?' taken':'');
+    e.textContent=t;
+    if(!isTaken){var tt=t;(function(tt){e.onclick=function(){selectTime(tt,this);};})(tt);}
+    tg.appendChild(e);
+  });
+}
+function selectTime(t,el){
+  document.querySelectorAll('.time-slot').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  booking.time=t;
+  document.getElementById('btn-next').style.display='block';
+}
+
+function goToStep(n){
+  booking.step=n;
+  for(var i=1;i<=5;i++){
+    var s=document.getElementById('step-'+i);
+    if(s){s.classList.toggle('active',i===n);}
+    var dot=document.getElementById('s'+i);
+    if(dot){dot.classList.toggle('done',i<=n);}
+  }
+  document.getElementById('step-success').classList.remove('active');
+  var back=document.getElementById('btn-back');
+  var next=document.getElementById('btn-next');
+  var pay=document.getElementById('btn-pay');
+  back.style.display=n>1?'block':'none';
+  pay.style.display=n===5?'block':'none';
+  next.style.display=(n>=1&&n<=3&&n!==1&&n!==2)?'block':'none';
+  if(n===3){next.style.display='none';buildCal();}
+  if(n===4){next.style.display='block';}
+  if(n===5){buildSummary();next.style.display='none';}
+}
+
+function nextStep(){
+  if(booking.step===3&&!booking.time)return;
+  if(booking.step<5)goToStep(booking.step+1);
+}
+function prevStep(){if(booking.step>1)goToStep(booking.step-1);}
+
+function buildSummary(){
+  var s=document.getElementById('booking-summary');
+  s.innerHTML='<div class="summary-row"><span class="summary-label">Barbero</span><span class="summary-val">'+booking.barber+'</span></div>'
+    +'<div class="summary-row"><span class="summary-label">Servicio</span><span class="summary-val">'+booking.service+'</span></div>'
+    +'<div class="summary-row"><span class="summary-label">Fecha</span><span class="summary-val">'+booking.date+'</span></div>'
+    +'<div class="summary-row"><span class="summary-label">Horario</span><span class="summary-val">'+booking.time+'</span></div>'
+    +'<div class="total-row"><span class="total-label">Total a pagar</span><span class="total-val">'+booking.price+'</span></div>';
+}
+
+function confirmPayment(){
+  var name=document.getElementById('client-name');
+  var phone=document.getElementById('client-phone');
+  if(name&&!name.value.trim()){name.focus();return;}
+  document.querySelectorAll('.booking-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-success').classList.add('active');
+  document.getElementById('btn-back').style.display='none';
+  document.getElementById('btn-pay').style.display='none';
+  document.getElementById('confirm-details').innerHTML='<b style="color:var(--text)">Barbero:</b> '+booking.barber+'<br>'
+    +'<b style="color:var(--text)">Servicio:</b> '+booking.service+'<br>'
+    +'<b style="color:var(--text)">Fecha:</b> '+booking.date+' a las '+booking.time+'<br>'
+    +'<b style="color:var(--text)">Total pagado:</b> <span style="color:var(--gold)">'+booking.price+'</span>';
+}
+
+function showAdminPage(id,el){
+  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+function openAddBarber(){document.getElementById('add-barber-modal').classList.add('open')}
+function closeAddBarber(){document.getElementById('add-barber-modal').classList.remove('open')}
+function confirmAddBarber(){
+  var inputs=document.querySelectorAll('#add-barber-modal input');
+  var name=inputs[0].value.trim();
+  if(!name)return;
+  var initials=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  var colors=['#001a30','#150020','#001a10','#1a1000'];
+  var color=colors[Math.floor(Math.random()*colors.length)];
+  var div=document.createElement('div');
+  div.className='barber-row';
+  div.innerHTML='<div class="barber-av" style="background:'+color+'">'+initials+'</div>'
+    +'<div class="barber-row-info"><div class="barber-row-name">'+name+'</div>'
+    +'<div class="barber-row-meta">Barber · '+inputs[1].value+'</div></div>'
+    +'<div class="barber-row-actions">'
+    +'<button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Editar</button>'
+    +'<button class="btn btn-dark" style="padding:6px 14px;font-size:.75rem">Horarios</button>'
+    +'<button class="btn btn-danger" style="padding:6px 14px;font-size:.75rem">Dar de baja</button></div>';
+  document.getElementById('barbers-list').appendChild(div);
+  inputs.forEach(i=>i.value='');
+  closeAddBarber();
+}
+</script>
